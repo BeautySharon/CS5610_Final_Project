@@ -69,15 +69,15 @@ In this iteration, we focused on **building core functionalities**, improving th
 
 ### Login Review
 
-<img src="public/images/login2.png" alt="Login Review" width="600" />
+<img src="pawtrust-frontend/public/images/login2.png" alt="Login Review" width="600" />
 
 ### Owner Dashboard Review
 
-<img src="public/images/ownerdashboard2.png" alt="Owner Dashboard Review review screenshot" width="600" />
+<img src="pawtrust-frontend/public/images/ownerdashboard2.png" alt="Owner Dashboard Review review screenshot" width="600" />
 
 ### Sitter Dashboard Review
 
-<img src="public/images/sitterdashboard2.png" alt="Sitter Dashboard Review review screenshot" width="600" />
+<img src="pawtrust-frontend/public/images/sitterdashboard2.png" alt="Sitter Dashboard Review review screenshot" width="600" />
 
 ## Deployed Links
 
@@ -126,15 +126,15 @@ PawTrust is a **MERN stack SaaS application** that connects **pet owners** with 
 
 ### Login Review
 
-<img src="public/images/login.png" alt="Login Review" width="600" />
+<img src="pawtrust-frontend/public/images/login.png" alt="Login Review" width="600" />
 
 ### Owner Dashboard Review
 
-<img src="public/images/ownerdashboard.png" alt="Owner Dashboard Review review screenshot" width="600" />
+<img src="pawtrust-frontend/public/images/ownerdashboard.png" alt="Owner Dashboard Review review screenshot" width="600" />
 
 ### Sitter Dashboard Review
 
-<img src="public/images/sitterdashboard.png" alt="Sitter Dashboard Review review screenshot" width="600" />
+<img src="pawtrust-frontend/public/images/sitterdashboard.png" alt="Sitter Dashboard Review review screenshot" width="600" />
 
 ---
 
