@@ -59,18 +59,6 @@ export default class TasksDAO {
       return [];
     }
   }
-
-  // static async addTask(data) {
-  //   try {
-  //     const insertResult = await tasks.insertOne(data);
-  //     const insertedTask = await tasks.findOne({
-  //       _id: insertResult.insertedId,
-  //     }); // ✅ 返回完整任务
-  //     return insertedTask;
-  //   } catch (e) {
-  //     throw new Error(`Error inserting task: ${e.message}`);
-  //   }
-  // }
   static async addTask(taskData) {
     try {
       const taskDoc = {
