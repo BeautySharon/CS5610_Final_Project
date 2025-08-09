@@ -58,18 +58,33 @@
 //     </form>
 //   );
 // }
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BASE_URL } from "../config";
 
-export default function PostTaskForm() {
+function toDatetimeLocalValue(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  const off = d.getTimezoneOffset();
+  const local = new Date(d.getTime() - off * 60000);
+  return local.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm
+}
+export default function PostTaskForm({ initialDate = "" }) {
   const [form, setForm] = useState({
     petType: "",
     description: "",
-    date: "",
+    date: initialDate ? toDatetimeLocalValue(initialDate) : "",
     duration: "",
     location: "",
     status: "open",
   });
+  useEffect(() => {
+    // 当 initialDate 变化时同步
+    setForm((f) => ({
+      ...f,
+      date: initialDate ? toDatetimeLocalValue(initialDate) : "",
+    }));
+  }, [initialDate]);
+
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [ok, setOk] = useState("");

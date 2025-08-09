@@ -5,6 +5,7 @@ import TaskList from "../components/TaskList";
 import SitterList from "../components/SitterList";
 import PostTaskForm from "../components/PostTaskForm";
 import EditTaskModal from "../components/EditTaskModal";
+import TaskCalendar from "../components/TaskCalendar";
 
 export default function OwnerDashboard() {
   const navigate = useNavigate();
@@ -12,6 +13,16 @@ export default function OwnerDashboard() {
   // 🔝 keep all hooks before any early return
   const [ownerId, setOwnerId] = useState(null);
   const [tasks, setTasks] = useState([]);
+
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [composeOpen, setComposeOpen] = useState(false);
+  const [composeDateISO, setComposeDateISO] = useState("");
+  const handleOpenTask = (taskId) => {
+    // 例如触发你已有的 Edit 弹窗
+    // openEdit(tasks.find(t => String(t._id) === String(taskId)));
+    console.log("open task", taskId);
+  };
+
   const [sitters, setSitters] = useState([]);
   const [applications, setApplications] = useState({});
 
@@ -217,7 +228,61 @@ export default function OwnerDashboard() {
           </div>
         </div>
       </div>
+      {/* calendar */}
+      <div className="px-6 mt-8">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg font-semibold text-slate-900">Calendar</h3>
+          <button
+            className="rounded-xl bg-indigo-600 text-white px-3 py-2 hover:bg-indigo-700"
+            onClick={() => setCalendarOpen((v) => !v)}
+          >
+            {calendarOpen ? "Hide" : "Show"} Calendar
+          </button>
+        </div>
 
+        {calendarOpen && (
+          <TaskCalendar
+            tasks={tasks}
+            initialView="timeGridWeek"
+            onCreate={(iso) => {
+              setComposeDateISO(iso); // 预填日期
+              setComposeOpen(true); // 打开新建弹窗
+            }}
+            onOpen={(taskId) => {
+              const t = tasks.find((x) => String(x._id) === String(taskId));
+              if (t) openEdit(t); // 直接进入编辑弹窗
+            }}
+          />
+        )}
+      </div>
+      {/* Create Task Modal (from calendar click) */}
+      {composeOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setComposeOpen(false)}
+          />
+          <div className="relative z-10 w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Create Task</h3>
+              <button
+                className="text-slate-500 hover:text-slate-700"
+                onClick={() => setComposeOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <PostTaskForm
+              ownerId={ownerId}
+              initialDate={composeDateISO}
+              onCreated={(t) => {
+                setTasks((prev) => [t, ...prev]);
+                setComposeOpen(false);
+              }}
+            />
+          </div>
+        </div>
+      )}
       {/* sitters */}
       <div className="px-6 mt-8 pb-10">
         <SitterList
