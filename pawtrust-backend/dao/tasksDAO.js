@@ -130,4 +130,20 @@ export default class TasksDAO {
       return null;
     }
   }
+
+  // static async markAccepted(applicationId, taskId, sitterId) {
+  //   // 接受当前申请
+  //   await applications.updateOne(
+  //     { _id: new ObjectId(applicationId) },
+  //     { $set: { status: "accepted" } }
+  //   );
+  //   // 拒绝同任务的其它申请（可选）
+  //   await applications.updateMany(
+  //     {
+  //       taskId: new ObjectId(taskId),
+  //       _id: { $ne: new ObjectId(applicationId) },
+  //     },
+  //     { $set: { status: "rejected" } }
+  //   );
+  // }
 }

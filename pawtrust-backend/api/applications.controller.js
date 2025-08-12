@@ -62,4 +62,25 @@ export default class ApplicationsController {
       res.status(500).json({ error: e.message });
     }
   }
+  // static async apiAccept(req, res) {
+  //   try {
+  //     const { applicationId, taskId } = req.body;
+
+  //     const app = await ApplicationsDAO.getById(applicationId);
+  //     if (!app) return res.status(404).json({ error: "Application not found" });
+
+  //     const sitterId = app.sitterId; // 申请里应有 sitterId
+  //     await ApplicationsDAO.markAccepted(applicationId, taskId, sitterId);
+
+  //     await TasksDAO.updateTask(taskId, {
+  //       status: "assigned",
+  //       acceptedSitterId: new ObjectId(sitterId),
+  //     });
+
+  //     return res.json({ success: true });
+  //   } catch (e) {
+  //     console.error("apiAccept error:", e);
+  //     return res.status(500).json({ error: "Server error" });
+  //   }
+  // }
 }

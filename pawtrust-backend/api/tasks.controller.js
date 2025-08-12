@@ -1,5 +1,6 @@
 import TasksDAO from "../dao/tasksDAO.js";
 import { ObjectId } from "mongodb"; // ✅ Add this
+import ApplicationsDAO from "../dao/applicationsDAO.js"; // Import ApplicationsDAO
 
 export default class TasksController {
   static async apiGetTasks(req, res) {
@@ -217,6 +218,21 @@ export default class TasksController {
       return res.json({ success: true, task: updated });
     } catch (err) {
       console.error("updateTask error:", err);
+      return res.status(500).json({ error: "Server error" });
+    }
+  }
+  // api/tasks.controller.js
+  static async apiFinishTask(req, res) {
+    try {
+      const { taskId } = req.params;
+      if (!ObjectId.isValid(taskId)) {
+        return res.status(400).json({ error: "Invalid taskId" });
+      }
+      const updated = await TasksDAO.updateTaskStatus(taskId, "finished");
+      if (!updated) return res.status(404).json({ error: "Task not found" });
+      return res.json({ success: true, task: updated });
+    } catch (e) {
+      console.error("apiFinishTask error:", e);
       return res.status(500).json({ error: "Server error" });
     }
   }

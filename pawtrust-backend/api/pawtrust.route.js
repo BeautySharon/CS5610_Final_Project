@@ -16,6 +16,7 @@ router.route("/tasks/list/:_id").get(TasksController.apiGetTasksByTaskId);
 router.route("/tasks").post(TasksController.apiPostTask);
 router.route("/tasks/:id").put(TasksController.apiUpdateTask);
 router.route("/tasks/:id").delete(TasksController.apiDeleteTask);
+router.post("/tasks/:taskId/finish", TasksController.apiFinishTask);
 
 router.route("/login").post(UsersController.apiLogin);
 router.route("/register").post(UsersController.apiRegister);
