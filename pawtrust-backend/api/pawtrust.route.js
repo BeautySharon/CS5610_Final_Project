@@ -33,9 +33,14 @@ router
   .get(ApplicationsController.apiGetApplicationsBySitterId);
 router.route("/accept").post(ApplicationsController.apiAcceptApplication);
 
-router.route("/reviews").get(ReviewsController.apiGetReviews);
-router.route("/reviews").post(ReviewsController.apiPostReview);
-router.route("/reviews").put(ReviewsController.apiUpdateReview);
-router.route("/reviews").delete(ReviewsController.apiDeleteReview);
+// router.route("/reviews").get(ReviewsController.apiGetReviews);
+// router.route("/reviews").post(ReviewsController.apiPostReview);
+// router.route("/reviews").put(ReviewsController.apiUpdateReview);
+// router.route("/reviews").delete(ReviewsController.apiDeleteReview);
+router.route("/reviews").post(ReviewsController.apiCreateReview);
+router
+  .route("/reviews/sitter/:sitterId")
+  .get(ReviewsController.apiGetSitterReviews);
+router.route("/reviews/task/:taskId").get(ReviewsController.apiGetReviewByTask);
 
 export default router;

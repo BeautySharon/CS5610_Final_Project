@@ -87,7 +87,7 @@ export default function EditTaskModal({ open, task, onClose, onSaved }) {
         return;
       }
 
-      onSaved?.(updated); // ✅ always pass a task object with _id
+      onSaved?.(updated); //  always pass a task object with _id
       onClose?.();
     } catch (err) {
       console.error(err);

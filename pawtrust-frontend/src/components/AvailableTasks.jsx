@@ -16,6 +16,18 @@ function StatusBadge({ status = "open" }) {
   );
 }
 
+const toMs = (t) => {
+  if (!t) return 0;
+  if (typeof t === "number") return t < 1e12 ? t * 1000 : t; // 秒->毫秒
+  if (typeof t === "string") {
+    if (/^\d{10}$/.test(t)) return Number(t) * 1000; // "169..." 秒
+    const d = Date.parse(t);
+    return Number.isNaN(d) ? 0 : d;
+  }
+  const d = Date.parse(t);
+  return Number.isNaN(d) ? 0 : d;
+};
+
 /**
  * props:
  * - tasks: Task[]
@@ -40,14 +52,16 @@ export default function AvailableTasks({
   pageSize = 3,
   className = "",
 }) {
-  // 排序 & 分页
   const sorted = useMemo(
     () =>
       [...tasks].sort(
-        (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+        (a, b) =>
+          toMs(b.createdAt ?? b.date ?? b.updatedAt) -
+          toMs(a.createdAt ?? a.date ?? a.updatedAt)
       ),
     [tasks]
   );
+
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const pageClamped = Math.min(page || 1, totalPages);
   const paged = sorted.slice(
@@ -55,24 +69,31 @@ export default function AvailableTasks({
     pageClamped * pageSize
   );
 
-  // 切页后把滚动区回到顶部
   const scrollRef = useRef(null);
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = 0;
   }, [pageClamped]);
 
+  const prevLen = useRef(tasks.length);
+  useEffect(() => {
+    if (tasks.length > prevLen.current) {
+      setPage?.(1);
+    }
+    prevLen.current = tasks.length;
+  }, [tasks.length, setPage]);
+
   return (
     <section
       className={`rounded-2xl bg-white/80 backdrop-blur ring-1 ring-black/5 shadow-xl flex flex-col h-full ${className}`}
     >
-      {/* Header（不滚动） */}
+      {/* Header */}
       <div className="px-4 py-3 border-b">
         <h2 className="text-lg font-semibold text-slate-900">
           Available Tasks
         </h2>
       </div>
 
-      {/* Content（滚动区） */}
+      {/* Content */}
       <div ref={scrollRef} className="p-4 space-y-4 flex-1 overflow-y-auto">
         {loading ? (
           <div className="animate-pulse space-y-3">
@@ -85,9 +106,9 @@ export default function AvailableTasks({
             <p className="text-slate-700">No open tasks right now.</p>
           </div>
         ) : (
-          paged.map((task) => (
+          paged.map((task, idx) => (
             <div
-              key={task._id}
+              key={task._id ?? task.id ?? task.tempId ?? `row-${idx}`}
               className="rounded-2xl bg-white/80 ring-1 ring-black/5 shadow-sm p-4 hover:shadow-md transition"
             >
               <div className="flex items-start justify-between gap-3">
@@ -97,7 +118,7 @@ export default function AvailableTasks({
                   </h3>
                   <div className="mt-1 flex flex-wrap gap-2 text-sm text-slate-600">
                     {task.date && (
-                      <span>{new Date(task.date).toLocaleString()}</span>
+                      <span>{new Date(toMs(task.date)).toLocaleString()}</span>
                     )}
                     {task.duration && <span>• {task.duration}h</span>}
                     {task.location && <span>• {task.location}</span>}
@@ -115,7 +136,7 @@ export default function AvailableTasks({
               <div className="mt-3 border-t pt-3">
                 {appliedTaskIds.has(task._id) ? (
                   <div className="text-emerald-700 text-sm font-medium">
-                    ✅ Applied
+                    Applied
                   </div>
                 ) : (
                   <>
@@ -142,7 +163,7 @@ export default function AvailableTasks({
         )}
       </div>
 
-      {/* Footer（分页，不滚动） */}
+      {/* Footer */}
       <div className="px-4 pb-3 flex items-center justify-end gap-2 text-sm">
         <button
           className="rounded-lg px-3 py-1 ring-1 ring-slate-300 bg-white hover:bg-slate-50 disabled:opacity-50"

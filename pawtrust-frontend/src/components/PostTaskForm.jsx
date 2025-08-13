@@ -1,63 +1,3 @@
-// import { useState } from "react";
-// import { BASE_URL } from "../config";
-
-// export default function PostTaskForm() {
-//   const [form, setForm] = useState({
-//     petType: "",
-//     description: "",
-//     date: "",
-//     duration: "",
-//     location: "",
-//     status: "open",
-//   });
-
-//   const owner_id = localStorage.getItem("userId");
-
-//   const handleChange = (e) => {
-//     setForm({ ...form, [e.target.name]: e.target.value });
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     // const res = await fetch("http://localhost:5001/pawtrust/tasks", {
-//     const res = await fetch(`${BASE_URL}/pawtrust/tasks`, {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({ ...form, owner_id }),
-//     });
-
-//     const data = await res.json();
-//     // console.log("Response from server:", data);
-//     if (res.ok) {
-//       alert("Task posted!");
-//     } else {
-//       alert("Failed to post task: " + (data.error || "Unknown error"));
-//     }
-//   };
-
-//   return (
-//     <form onSubmit={handleSubmit} className="space-y-4 p-4">
-//       <input name="petType" placeholder="Pet Type" onChange={handleChange} />
-//       <textarea
-//         name="description"
-//         placeholder="Description"
-//         onChange={handleChange}
-//       />
-//       <input name="date" type="datetime-local" onChange={handleChange} />
-//       <input name="duration" placeholder="Duration" onChange={handleChange} />
-//       <input name="location" placeholder="Location" onChange={handleChange} />
-//       <button
-//         type="submit"
-//         className="bg-green-600 text-white px-4 py-2 rounded"
-//       >
-//         Post Task
-//       </button>
-//     </form>
-//   );
-// }
 import { useState, useEffect } from "react";
 import { BASE_URL } from "../config";
 
@@ -68,7 +8,8 @@ function toDatetimeLocalValue(iso) {
   const local = new Date(d.getTime() - off * 60000);
   return local.toISOString().slice(0, 16); // YYYY-MM-DDTHH:mm
 }
-export default function PostTaskForm({ initialDate = "" }) {
+// export default function PostTaskForm({ initialDate = "" }) {
+export default function PostTaskForm({ ownerId, onCreated, initialDate = "" }) {
   const [form, setForm] = useState({
     petType: "",
     description: "",
@@ -88,7 +29,7 @@ export default function PostTaskForm({ initialDate = "" }) {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [ok, setOk] = useState("");
-  const owner_id = localStorage.getItem("userId") || "";
+  // const owner_id = localStorage.getItem("userId") || "";
 
   const handleChange = (e) => {
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
@@ -113,15 +54,28 @@ export default function PostTaskForm({ initialDate = "" }) {
 
     try {
       setLoading(true);
+      if (!ownerId) throw new Error("Owner not found. Please log in again.");
+      const dateISO = new Date(form.date).toISOString();
       const res = await fetch(`${BASE_URL}/pawtrust/tasks`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...form, owner_id }),
+        body: JSON.stringify({
+          petType: form.petType,
+          description: form.description,
+          date: dateISO,
+          duration: form.duration,
+          location: form.location,
+          status: form.status ?? "open",
+          owner_id: ownerId,
+        }),
       });
       const data = await res.json();
       if (!res.ok)
         throw new Error(data?.error || data?.message || "Failed to post task.");
       setOk("Task posted successfully!");
+      if (typeof onCreated === "function") {
+        onCreated(data);
+      }
       // 可选：清空表单
       setForm({
         petType: "",
@@ -234,13 +188,13 @@ export default function PostTaskForm({ initialDate = "" }) {
           />
         </label>
 
-        {/* Status (可保留隐藏或显式给 Owner 选) */}
+        {/* Status  */}
         {/* <label className="block">
           <span className="mb-1 block text-sm font-medium text-slate-700">Status</span>
           <select ...>open / closed</select>
         </label> */}
 
-        {/* 提示信息 */}
+        {/* Aleart information */}
         {err && (
           <div className="rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm border border-red-200">
             {err}

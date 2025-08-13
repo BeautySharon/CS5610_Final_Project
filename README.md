@@ -1,85 +1,65 @@
-# Iter2 Team: PerfectWeb
+# 🐾 PawTrust 🐾
 
-## Project Name: PawTrust
-
-### Team Members
-
-- **Sihui Lyu**
+PawTrust is a MERN stack web application that connects **pet owners** with trustworthy **pet sitters**. Owners can post pet care tasks, review and accept applications, while sitters can apply for tasks, complete them, and receive reviews.
 
 ---
 
-## Project Description
+## Features
 
-**PawTrust** is a MERN stack web application that connects **pet owners** with **trustworthy pet sitters**.  
-Pet owners can post pet care tasks, and sitters can browse and apply for these tasks.
+- **User Authentication**
 
-The platform aims to:
+  - Email/Password login
+  - Role selection: Owner or Sitter
+  - Sample testing accounts provided
 
-- Help pet owners find reliable care for their pets quickly.
-- Give part-time sitters (students, freelancers, etc.) flexible work opportunities.
+- **Task Management**
 
----
+  - Owners: Post, edit, and delete tasks
+  - Sitters: Browse and apply for open tasks
+  - Owners accept applications (one sitter per task)
+  - Sitters mark accepted tasks as finished
+  - Owners leave reviews after completion
 
-## Iteration 2 Progress
+- **Calendar Integration (Implemented using the third-party React library [FullCalendar](https://fullcalendar.io/))**
 
-In this iteration, we focused on **building core functionalities**, improving the UI, and deploying a working version to production.
+  - View all tasks by date
+  - Post tasks directly from the calendar view
 
-### **1. Task Management (CRUD)**
+- **Reviews & Ratings**
 
-- Implemented backend APIs for **create, read, update, delete** operations using MongoDB & Express.
-- Added **authorization logic** so only task owners can create or delete their own tasks.
+  - Owners can review sitters after task completion
+  - Reviews appear in sitters’ **Finished & Reviews** section
 
-### **2. Owner Dashboard**
-
-- Created an **Owner Dashboard** to display posted tasks in a **paginated list**.
-- Added **application management**:
-  - View all sitter applications per task.
-  - Accept **only one sitter** per task.
-- Updated task and application lists **in real time** after changes.
-
-### **3. Sitter Dashboard**
-
-- Built a **task browsing system** that shows only **open/available tasks**.
-- Enabled **application submission** with an optional message to the task owner.
-- Added a **separate “Accepted Tasks” section** so sitters can easily track confirmed jobs.
-- Applied **two-column responsive layout** with **fixed-height scrollable cards**.
-
-### **4. UI/UX Improvements**
-
-- Used **Tailwind CSS** for a clean, responsive, modern design.
-- Designed consistent layouts:
-  - **Owner Dashboard:** Post Task + Available Tasks in one row, Available Sitters in a full-width row below.
-  - **Sitter Dashboard:** Available Tasks on the left (3 per page), Accepted Tasks on the right (6 per page).
-- Ensured components have **consistent height**, even when the number of tasks varies.
-
-### **5. Backend–Frontend Integration**
-
-- Integrated frontend React components with backend Express APIs.
-- Used `fetch` for API calls with proper success/error feedback.
-- Handled **state updates** so UI reflects backend changes instantly.
-
-### **6. Deployment**
-
-- Deployed both **frontend** and **backend** to **Google Cloud App Engine**.
-- Configured **CORS** and environment variables for production deployment.
+- **Responsive UI**
+  - Built with Tailwind CSS for mobile and desktop
 
 ---
 
-## Screenshots
+## Screenshots Overview
 
-### Login Review
+Below are the main views of **PawTrust**:
 
-<img src="pawtrust-frontend/public/images/login2.png" alt="Login Review" width="600" />
+### **Home Page**
 
-### Owner Dashboard Review
+<img src="pawtrust-frontend/public/images/login.png" alt="PawTrust Home Page" width="800" />
 
-<img src="pawtrust-frontend/public/images/ownerdashboard2.png" alt="Owner Dashboard Review review screenshot" width="600" />
+### **Owner Dashboard**
 
-### Sitter Dashboard Review
+<img src="pawtrust-frontend/public/images/ownerdashboard.png" alt="Owner Dashboard" width="800" />
 
-<img src="pawtrust-frontend/public/images/sitterdashboard2.png" alt="Sitter Dashboard Review review screenshot" width="600" />
+### **Sitter Dashboard**
 
-## Deployed Links
+<img src="pawtrust-frontend/public/images/sitterdashboard.png" alt="Sitter Dashboard" width="800" />
+
+---
+
+# For a detailed user guide with full instructions and more screenshots, please refer to the User Guide PDF:
+
+[https://docs.google.com/document/d/1Iss2T72vSEq4-krnOlWMqNabvPXAXoBrTseXnCKdLxE/edit?usp=sharing](https://docs.google.com/document/d/1Iss2T72vSEq4-krnOlWMqNabvPXAXoBrTseXnCKdLxE/edit?usp=sharing)
+
+---
+
+# Deployed Links
 
 - **Frontend:** [https://pawtrust.uw.r.appspot.com](https://pawtrust.uw.r.appspot.com)
 - **Backend API:** [https://pawtrust-backend.uw.r.appspot.com/pawtrust/tasks/available](https://pawtrust-backend.uw.r.appspot.com/pawtrust/tasks/available)
@@ -93,95 +73,73 @@ In this iteration, we focused on **building core functionalities**, improving th
 
 ---
 
-## Next Steps
+## Development Iterations
 
-- Implement **task editing** for owners.
-- Add **review and rating system** for sitters.
-- Integrate **calendar view** for scheduled tasks.
-- Continue **improving UI**.
+### **Iteration 1 – Project Setup & Basic Framework**
 
-<div style="height:200px;"></div>
-
----
-
-# Iter1 Team: PerfectWeb
-
-# PawTrust
-
-PawTrust is a **MERN stack SaaS application** that connects **pet owners** with **pet sitters**. Owners post tasks (walks, feeding, daycare) and sitters apply. Owners can review applications and accept one sitter per task.
+- Set up **frontend** (React + Vite) and **backend** (Express + MongoDB) repositories on GitHub.
+- Configured **Google Cloud App Engine** deployment for both frontend & backend.
+- Built **basic routing** in React for:
+  - Login
+  - Register
+  - Profile Setup
+  - Dashboard pages
+- Implemented **email/password authentication** with session persistence (`localStorage`).
+- Created initial **Owner Dashboard** & **Sitter Dashboard** layouts.
 
 ---
 
-## Demo / Links
+### **Iteration 2 – Core Features & UI Enhancement**
 
-- **Frontend (GCP App Engine):** https://pawtrust.uw.r.appspot.com
-- **Backend API (GCP App Engine):** https://pawtrust-backend.uw.r.appspot.com/pawtrust/tasks/available
-- **Repos**
-  - Frontend: https://github.com/BeautySharon/CS5610_Final_Project/tree/main/pawtrust-frontend
-  - Backend: https://github.com/BeautySharon/CS5610_Final_Project/tree/main/pawtrust-backend
-
----
-
-## Screenshots
-
-### Login Review
-
-<img src="pawtrust-frontend/public/images/login.png" alt="Login Review" width="600" />
-
-### Owner Dashboard Review
-
-<img src="pawtrust-frontend/public/images/ownerdashboard.png" alt="Owner Dashboard Review review screenshot" width="600" />
-
-### Sitter Dashboard Review
-
-<img src="pawtrust-frontend/public/images/sitterdashboard.png" alt="Sitter Dashboard Review review screenshot" width="600" />
+- **Task Management (CRUD)**: Backend APIs for create, read, update, delete tasks.
+- **Authorization**: Only owners can manage their own tasks.
+- **Owner Dashboard**:
+  - Post new tasks.
+  - View sitter applications.
+  - Accept **only one** sitter per task.
+- **Sitter Dashboard**:
+  - Browse available tasks.
+  - Apply for tasks with optional message.
+  - View **Accepted Tasks**.
+- **UI/UX Improvements**:
+  - Tailwind CSS styling.
+  - Responsive layout & consistent component height.
 
 ---
 
-## Features in Iteration 1
+### **Iteration 3 – Advanced Features & Final Delivery**
 
-- Set up the project repositories (frontend and backend) on GitHub
-
-- Established Google Cloud deployment for both frontend and backend
-
-- Implemented basic routing in React for Login, Register, Profile Setup, and Dashboard pages
-
-- Connected backend API with MongoDB
-
-- Added email/password authentication and session persistence with localStorage
-
-- Created Owner Dashboard and Sitter Dashboard
-
----
-
-## Next Steps
-
-- Implement **CRUD operations** for tasks (create, read, update, delete)
-- Build **Owner Dashboard** to manage tasks and sitter applications
-- Create **Sitter Dashboard** to browse and apply for tasks
+- Added **Finish Task** feature:
+  - Sitters can mark accepted tasks as **Finished**.
+  - Owners can leave reviews for **Finished** tasks.
+- Implemented **Review System**:
+  - Owners’ reviews are stored and displayed in sitter’s profile.
+- **Calendar Integration** (third-party React library):
+  - Owners can view and post tasks directly from the calendar.
+  - Easy scheduling and booking management.
+- Final **UI polish** and bug fixes.
+- Completed **User Guide** (PDF) and project documentation.
 
 ---
 
 ## Tech Stack
 
-**Frontend:**
+**Frontend**
 
-- React
-- React Router
-- Bootstrap
-- Fetch API
+- React + Vite
+- Tailwind CSS
+- FullCalendar (third-party React library)
 
-**Backend:**
+**Backend**
 
-- Node.js
-- Express
+- Node.js + Express
 - MongoDB
+- DAO pattern
+- RESTful API
 
-**Deployment:**
+**Deployment**
 
-- Google Cloud
+- Google Cloud App Engine
+- MongoDB Atlas
 
-**Other:**
-
-- JWT Authentication
-- LocalStorage
+---

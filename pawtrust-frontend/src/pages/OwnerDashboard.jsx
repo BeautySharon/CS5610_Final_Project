@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../config";
 import TaskList from "../components/TaskList";
@@ -6,25 +6,21 @@ import SitterList from "../components/SitterList";
 import PostTaskForm from "../components/PostTaskForm";
 import EditTaskModal from "../components/EditTaskModal";
 import TaskCalendar from "../components/TaskCalendar";
+import ReviewModal from "../components/ReviewModal";
 
 export default function OwnerDashboard() {
   const navigate = useNavigate();
 
-  // 🔝 keep all hooks before any early return
   const [ownerId, setOwnerId] = useState(null);
   const [tasks, setTasks] = useState([]);
+  const [sitters, setSitters] = useState([]);
+  const [applications, setApplications] = useState({});
 
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [composeOpen, setComposeOpen] = useState(false);
   const [composeDateISO, setComposeDateISO] = useState("");
-  const handleOpenTask = (taskId) => {
-    // 例如触发你已有的 Edit 弹窗
-    // openEdit(tasks.find(t => String(t._id) === String(taskId)));
-    console.log("open task", taskId);
-  };
 
-  const [sitters, setSitters] = useState([]);
-  const [applications, setApplications] = useState({});
+  const [reviewTask, setReviewTask] = useState(null);
 
   // toolbar + pagination
   const [q, setQ] = useState("");
@@ -35,6 +31,37 @@ export default function OwnerDashboard() {
   // edit modal
   const [editingTask, setEditingTask] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  // Refetch owner data when needed
+  const refetchOwnerData = useCallback(async () => {
+    if (!ownerId) return;
+    try {
+      const [taskRes, appRes] = await Promise.all([
+        fetch(`${BASE_URL}/pawtrust/tasks/owner/${ownerId}`),
+        fetch(`${BASE_URL}/pawtrust/applications?ownerId=${ownerId}`),
+      ]);
+      if (!taskRes.ok || !appRes.ok) return;
+      const [taskData, appData] = await Promise.all([
+        taskRes.json(),
+        appRes.json(),
+      ]);
+
+      const safeTasks = Array.isArray(taskData) ? taskData : [];
+      setTasks(safeTasks);
+
+      const taskIds = new Set(safeTasks.map((t) => String(t._id)));
+      const grouped = {};
+      (Array.isArray(appData) ? appData : [])
+        .filter((a) => taskIds.has(String(a.taskId)))
+        .forEach((a) => {
+          const k = String(a.taskId);
+          (grouped[k] ||= []).push(a);
+        });
+      setApplications(grouped);
+    } catch (e) {
+      console.error(e);
+    }
+  }, [ownerId]);
 
   useEffect(() => {
     const id = localStorage.getItem("userId");
@@ -49,7 +76,6 @@ export default function OwnerDashboard() {
         const [taskRes, sitterRes, appRes] = await Promise.all([
           fetch(`${BASE_URL}/pawtrust/tasks/owner/${ownerId}`),
           fetch(`${BASE_URL}/pawtrust/sitters`),
-          // ideally scope this on the server; fallback: filter by our tasks below
           fetch(`${BASE_URL}/pawtrust/applications?ownerId=${ownerId}`),
         ]);
 
@@ -83,6 +109,15 @@ export default function OwnerDashboard() {
     })();
   }, [ownerId]);
 
+  const acceptedByTask = useMemo(() => {
+    const m = {};
+    Object.entries(applications || {}).forEach(([taskId, apps]) => {
+      const acc = (apps || []).find((a) => a.status === "accepted");
+      if (acc) m[String(taskId)] = String(acc.sitterId);
+    });
+    return m;
+  }, [applications]);
+
   const sitterMap = useMemo(
     () => new Map(sitters.map((s) => [String(s._id), s])),
     [sitters]
@@ -114,7 +149,6 @@ export default function OwnerDashboard() {
       const data = await res.json();
       if (!data?.success) return alert("Accept failed.");
 
-      // Align statuses: task -> assigned; accepted app -> accepted; others -> rejected
       setTasks((prev) =>
         prev.map((t) =>
           String(t._id) === String(taskId)
@@ -162,6 +196,7 @@ export default function OwnerDashboard() {
   };
 
   const replaceTaskInList = (updated) => {
+    if (!updated?._id) return;
     setTasks((prev) =>
       prev.map((t) => (String(t._id) === String(updated._id) ? updated : t))
     );
@@ -191,7 +226,14 @@ export default function OwnerDashboard() {
                 </h3>
                 <PostTaskForm
                   ownerId={ownerId}
-                  onCreated={(t) => setTasks((prev) => [t, ...prev])}
+                  // onCreated={(t) => setTasks((prev) => [t, ...prev])}
+                  onCreated={(t) => {
+                    setTasks((prev) => [t, ...prev]);
+                    setQ("");
+                    setStatusFilter("");
+                    setTaskPage(1); // reset to first page
+                    refetchOwnerData();
+                  }}
                 />
               </div>
             </div>
@@ -203,16 +245,18 @@ export default function OwnerDashboard() {
               className="rounded-2xl bg-white/80 ring-1 ring-black/5 lg:h-[640px]"
               tasks={tasks}
               applications={applications}
+              acceptedByTask={acceptedByTask}
               getSitterName={getSitterName}
               onDelete={handleDelete}
               onAccept={handleAccept}
               onEdit={openEdit}
+              onReview={(task) => setReviewTask(task)}
               q={q}
               setQ={setQ}
               statusFilter={statusFilter}
               setStatusFilter={(v) => {
                 setStatusFilter(v);
-                setTaskPage(1); // reset page on filter change
+                setTaskPage(1);
               }}
               page={taskPage}
               setPage={setTaskPage}
@@ -225,9 +269,28 @@ export default function OwnerDashboard() {
               onClose={closeEdit}
               onSaved={replaceTaskInList}
             />
+
+            <ReviewModal
+              open={!!reviewTask}
+              onClose={() => setReviewTask(null)}
+              taskId={reviewTask?._id || null}
+              ownerId={ownerId}
+              onSubmitted={(reviewObj) => {
+                const safeRating = Number(
+                  reviewObj?.rating ?? reviewObj?.data?.rating ?? 0
+                );
+                replaceTaskInList({
+                  ...reviewTask,
+                  reviewed: true,
+                  rating: safeRating,
+                });
+                setReviewTask(null);
+              }}
+            />
           </div>
         </div>
       </div>
+
       {/* calendar */}
       <div className="px-6 mt-8">
         <div className="flex items-center justify-between mb-3">
@@ -245,16 +308,17 @@ export default function OwnerDashboard() {
             tasks={tasks}
             initialView="timeGridWeek"
             onCreate={(iso) => {
-              setComposeDateISO(iso); // 预填日期
-              setComposeOpen(true); // 打开新建弹窗
+              setComposeDateISO(iso);
+              setComposeOpen(true);
             }}
             onOpen={(taskId) => {
               const t = tasks.find((x) => String(x._id) === String(taskId));
-              if (t) openEdit(t); // 直接进入编辑弹窗
+              if (t) openEdit(t);
             }}
           />
         )}
       </div>
+
       {/* Create Task Modal (from calendar click) */}
       {composeOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -275,14 +339,23 @@ export default function OwnerDashboard() {
             <PostTaskForm
               ownerId={ownerId}
               initialDate={composeDateISO}
+              // onCreated={(t) => {
+              //   setTasks((prev) => [t, ...prev]);
+              //   setComposeOpen(false);
+              // }}
               onCreated={(t) => {
                 setTasks((prev) => [t, ...prev]);
+                setQ("");
+                setStatusFilter("");
+                setTaskPage(1);
                 setComposeOpen(false);
+                refetchOwnerData();
               }}
             />
           </div>
         </div>
       )}
+
       {/* sitters */}
       <div className="px-6 mt-8 pb-10">
         <SitterList

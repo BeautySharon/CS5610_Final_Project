@@ -1,95 +1,3 @@
-// import { useState, useEffect } from "react";
-// import { useNavigate } from "react-router-dom";
-// import { BASE_URL } from "../config";
-
-// export default function LoginPage() {
-//   const navigate = useNavigate();
-
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-
-//   useEffect(() => {
-//     setEmail("");
-//     setPassword("");
-//   }, []);
-
-//   const handleLogin = async (e) => {
-//     e.preventDefault();
-
-//     try {
-//       // const res = await fetch("http://localhost:5001/pawtrust/login", {
-//       const res = await fetch(`${BASE_URL}/pawtrust/login`, {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         body: JSON.stringify({ email, password }),
-//       });
-
-//       const data = await res.json();
-//       if (!res.ok) throw new Error(data.message);
-
-//       // Save login info to localStorage
-//       localStorage.setItem("userId", data.user._id);
-//       localStorage.setItem("role", data.user.userType);
-//       localStorage.setItem("name", data.user.name);
-
-//       // Optional: reset form fields
-//       setEmail("");
-//       setPassword("");
-
-//       // Redirect based on role
-//       navigate(`/${data.user.userType}`);
-//     } catch (err) {
-//       setPassword(""); // Clear password field on error
-//       alert("Login failed: " + err.message);
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
-//       <h1 className="text-3xl font-bold mb-6">PawTrust</h1>
-//       <form
-//         onSubmit={handleLogin}
-//         className="bg-white p-6 rounded-xl shadow-lg w-full max-w-sm space-y-4"
-//       >
-//         <h2 className="text-xl font-semibold text-center">Login</h2>
-
-//         <input
-//           type="email"
-//           placeholder="Email"
-//           autoComplete="off"
-//           className="w-full border px-3 py-2 rounded"
-//           value={email}
-//           onChange={(e) => setEmail(e.target.value)}
-//           required
-//         />
-
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           autoComplete="off"
-//           className="w-full border px-3 py-2 rounded"
-//           value={password}
-//           onChange={(e) => setPassword(e.target.value)}
-//           required
-//         />
-
-//         <button
-//           type="submit"
-//           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
-//         >
-//           Login
-//         </button>
-
-//         <p className="text-sm text-gray-500 text-center">
-//           Don't have an account?{" "}
-//           <a href="/register" className="text-blue-600 underline">
-//             Register here
-//           </a>
-//         </p>
-//       </form>
-//     </div>
-//   );
-// }
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../config";
@@ -151,7 +59,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* 背景：渐变 + 细网格纹理 */}
+      {/* bg */}
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-sky-50" />
       <div
         className="absolute inset-0 opacity-[0.12] pointer-events-none"
@@ -163,7 +71,7 @@ export default function LoginPage() {
 
       <div className="relative z-10 flex items-center justify-center min-h-screen px-4">
         <div className="w-full max-w-md">
-          {/* 品牌区 */}
+          {/* icon */}
           <div className="mb-6 text-center text-indigo-600">
             <div className="mx-auto mb-2 h-12 w-12 rounded-2xl bg-indigo-600/10 flex items-center justify-center">
               <div className="relative h-5 w-5">
@@ -182,7 +90,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* 登录卡片 */}
+          {/* log in card */}
           <div className="rounded-2xl bg-white/80 backdrop-blur shadow-xl ring-1 ring-black/5 p-6 transition hover:shadow-2xl">
             <form onSubmit={handleLogin} className="space-y-4">
               {/* Email */}
@@ -232,14 +140,14 @@ export default function LoginPage() {
                 </div>
               </label>
 
-              {/* 错误提示 */}
+              {/* error */}
               {err && (
                 <div className="rounded-lg bg-red-50 text-red-700 px-3 py-2 text-sm border border-red-200">
                   {err}
                 </div>
               )}
 
-              {/* 登录按钮 */}
+              {/* log in button */}
               <button
                 type="submit"
                 disabled={loading}
@@ -249,7 +157,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            {/* 注册 */}
+            {/* registration */}
             <p className="mt-4 text-center text-sm text-slate-600">
               Don’t have an account?{" "}
               <a
