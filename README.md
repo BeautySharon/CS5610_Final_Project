@@ -11,6 +11,10 @@ PawTrust is a MERN stack web application that connects **pet owners** with trust
   - Email/Password login
   - Role selection: Owner or Sitter
   - Sample testing accounts provided
+    - Owner Account: owner1@gmail.com Password: 88888888
+    - Owner Account: owner2@gmail.com Password: 88888888
+    - Sitter Account: sitter1@gmail.com Password: 88888888
+    - Sitter Account: sitter2@gmail.com Password: 88888888
 
 - **Task Management**
 
