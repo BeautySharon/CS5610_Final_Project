@@ -4,7 +4,6 @@ const { ObjectId } = mongodb;
 let tasks;
 let applications;
 
-/** 统一安全转换为 ObjectId；传非法值时抛出明确错误 */
 const toObjId = (v, name = "id") => {
   const s = String(v);
   if (!ObjectId.isValid(s)) throw new Error(`Invalid ObjectId for ${name}`);
@@ -16,7 +15,7 @@ export default class TasksDAO {
     if (!tasks) {
       tasks = await conn.db(process.env.PawTrust_db).collection("tasks");
     }
-    // ✅ 注入 applications，用于兜底推导 accepted sitter
+
     if (!applications) {
       applications = await conn
         .db(process.env.PawTrust_db)
@@ -97,29 +96,15 @@ export default class TasksDAO {
     }
   }
 
-  // static async deleteTask(taskId) {
-  //   try {
-  //     const _id = toObjId(taskId, "taskId");
-  //     const del = await tasks.deleteOne({ _id });
-  //     if (del.deletedCount === 0)
-  //       throw new Error("No task found with the given ID.");
-  //     return { message: "Task deleted successfully." };
-  //   } catch (e) {
-  //     throw new Error(`Error deleting task: ${e.message}`);
-  //   }
-  // }
   static async deleteTask(taskId) {
     try {
       const _id = toObjId(taskId, "taskId");
 
-      // 先删除任务
       const del = await tasks.deleteOne({ _id });
       if (del.deletedCount === 0) {
         throw new Error("No task found with the given ID.");
       }
 
-      // 任务确实被删除后，再清理所有关联的申请
-      // 你的 applications 表里用的是 { taskId: ObjectId(...) }（从 assertOwnerFinishedAndAccepted 可见）
       await applications.deleteMany({ taskId: _id });
 
       return { message: "Task and related applications deleted successfully." };
@@ -150,7 +135,6 @@ export default class TasksDAO {
     }
   }
 
-  /** 接受申请后写回任务上的 acceptedSitterId（供 /accept 调用） */
   static async setAcceptedSitter(taskId, sitterId) {
     const _id = toObjId(taskId, "taskId");
     await tasks.updateOne(
@@ -158,14 +142,13 @@ export default class TasksDAO {
       {
         $set: {
           acceptedSitterId: toObjId(sitterId, "sitterId"),
-          status: "assigned", // 看你业务，保留或去掉均可
+          status: "assigned",
           updatedAt: new Date(),
         },
       }
     );
   }
 
-  /** 留评后标记任务已评价 */
   static async setTaskReviewed(taskId, rating) {
     const _id = toObjId(taskId, "taskId");
     await tasks.updateOne(
@@ -180,16 +163,11 @@ export default class TasksDAO {
     );
   }
 
-  /**
-   * 断言：任务存在、属于该 owner、status === 'finished'，
-   * 且存在已接受保姆；若任务上没有，则从 applications 兜底推导，并写回。
-   */
   static async assertOwnerFinishedAndAccepted(taskId, ownerId) {
     const _id = toObjId(taskId, "taskId");
     const task = await tasks.findOne({ _id });
     if (!task) throw new Error("Task not found");
 
-    // 兼容 owner_id / ownerId，使用十六进制字符串稳妥比较
     const taskOwner = task.owner_id || task.ownerId;
     const taskOwnerHex =
       taskOwner && typeof taskOwner.toHexString === "function"
@@ -201,11 +179,9 @@ export default class TasksDAO {
 
     if (task.status !== "finished") throw new Error("Task is not finished");
 
-    // 1) 直接从任务取
     let accepted =
       task.acceptedSitterId || task.accepted_sitter_id || task.sitterId || null;
 
-    // 2) 没有就从 applications 兜底找一条 accepted 的申请
     if (!accepted) {
       const accApp = await applications.findOne({
         taskId: _id,
@@ -213,7 +189,7 @@ export default class TasksDAO {
       });
       if (accApp?.sitterId) {
         accepted = accApp.sitterId;
-        // 顺手写回任务，避免下次再查 applications
+
         await tasks.updateOne(
           { _id },
           { $set: { acceptedSitterId: toObjId(accepted, "sitterId") } }
@@ -223,7 +199,7 @@ export default class TasksDAO {
 
     if (!accepted) throw new Error("No accepted sitter");
 
-    task.acceptedSitterId = accepted; // 统一给调用方使用
+    task.acceptedSitterId = accepted;
     return task;
   }
 }

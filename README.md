@@ -57,23 +57,27 @@ Below are the main views of **PawTrust**:
 
 [https://docs.google.com/document/d/1Iss2T72vSEq4-krnOlWMqNabvPXAXoBrTseXnCKdLxE/edit?usp=sharing](https://docs.google.com/document/d/1Iss2T72vSEq4-krnOlWMqNabvPXAXoBrTseXnCKdLxE/edit?usp=sharing)
 
+# Demo Link
+
+[https://www.youtube.com/watch?v=ip4S6lbtx08](https://www.youtube.com/watch?v=ip4S6lbtx08)
+
 ---
 
 # Deployed Links
 
 - **Frontend:** [https://pawtrust.uw.r.appspot.com](https://pawtrust.uw.r.appspot.com)
-- **Backend API:** [https://pawtrust-backend.uw.r.appspot.com/pawtrust/tasks/available](https://pawtrust-backend.uw.r.appspot.com/pawtrust/tasks/available)
+- **Backend API:** [https://pawtrust-backend.uw.r.appspot.com/pawtrust/tasks](https://pawtrust-backend.uw.r.appspot.com/pawtrust/tasks)
 
 ---
 
-## GitHub Repositories
+# GitHub Repositories
 
 - **Frontend:** [https://github.com/BeautySharon/CS5610_Final_Project/tree/main/pawtrust-frontend](https://github.com/BeautySharon/CS5610_Final_Project/tree/main/pawtrust-frontend)
 - **Backend:** [https://github.com/BeautySharon/CS5610_Final_Project/tree/main/pawtrust-backend](https://github.com/BeautySharon/CS5610_Final_Project/tree/main/pawtrust-backend)
 
 ---
 
-## Development Iterations
+# Development Iterations
 
 ### **Iteration 1 – Project Setup & Basic Framework**
 
@@ -113,7 +117,7 @@ Below are the main views of **PawTrust**:
   - Sitters can mark accepted tasks as **Finished**.
   - Owners can leave reviews for **Finished** tasks.
 - Implemented **Review System**:
-  - Owners’ reviews are stored and displayed in sitter’s profile.
+  - Owners’ reviews are stored and displayed in sitter’s dashboard.
 - **Calendar Integration** (third-party React library):
   - Owners can view and post tasks directly from the calendar.
   - Easy scheduling and booking management.

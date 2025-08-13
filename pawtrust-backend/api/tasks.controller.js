@@ -1,6 +1,6 @@
 import TasksDAO from "../dao/tasksDAO.js";
-import { ObjectId } from "mongodb"; // ✅ Add this
-import ApplicationsDAO from "../dao/applicationsDAO.js"; // Import ApplicationsDAO
+import { ObjectId } from "mongodb";
+import ApplicationsDAO from "../dao/applicationsDAO.js";
 
 export default class TasksController {
   static async apiGetTasks(req, res) {
@@ -70,7 +70,7 @@ export default class TasksController {
   // static async apiPostTask(req, res) {
   //   try {
   //     const task = await TasksDAO.addTask(req.body);
-  //     res.status(201).json(task); // ✅ 返回完整文档
+  //     res.status(201).json(task);
   //   } catch (e) {
   //     res.status(500).json({ error: e.message });
   //   }
@@ -149,11 +149,10 @@ export default class TasksController {
     }
   }
 
-  // 更新任务（PUT /pawtrust/tasks/:taskId）
   static async updateTask(req, res) {
     try {
       const { taskId } = req.params;
-      const ownerId = req.user?.id || req.body.owner_id; // 仅用于鉴权
+      const ownerId = req.user?.id || req.body.owner_id;
 
       if (!ObjectId.isValid(taskId))
         return res.status(400).json({ error: "Invalid taskId" });

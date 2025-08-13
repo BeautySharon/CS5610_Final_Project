@@ -5,7 +5,7 @@ export default class UsersController {
     try {
       const sitters = await UsersDAO.getUsersByType("sitter");
       console.log(`apiGetUsersByType: Found ${sitters.length} sitters`);
-      res.json(sitters); // 👈 注意：直接返回数组
+      res.json(sitters);
     } catch (e) {
       console.error(`apiGetUsersByType error: ${e}`);
       res.status(500).json({ error: e.message });
@@ -25,7 +25,6 @@ export default class UsersController {
         return res.status(401).json({ message: "Incorrect password." });
       }
 
-      // 不返回 passwordHash
       const { passwordHash, ...safeUser } = user;
 
       res.status(200).json({ message: "Login successful", user: safeUser });
@@ -47,7 +46,7 @@ export default class UsersController {
       const newUser = {
         name,
         email,
-        password, // 明文密码，DAO 中处理 hash
+        password,
         userType,
         bio,
         location,

@@ -48,14 +48,13 @@ export default class UsersDAO {
         userType,
         bio,
         location,
-        profileImage: "", // 默认值
+        profileImage: "",
         availability: [],
         createdAt: new Date(),
       };
 
       const result = await users.insertOne(userDoc);
 
-      // 返回不含 passwordHash 的用户对象
       return {
         _id: result.insertedId,
         name,
